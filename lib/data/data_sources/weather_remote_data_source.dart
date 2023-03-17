@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:weathertracker/domain/entities/forecast.dart';
 import 'package:weathertracker/domain/entities/weather.dart';
 import 'package:weathertracker/infrastructure/http_client.dart';
 
@@ -14,12 +15,12 @@ class WeatherRemoteDataSource {
     return Weather.fromJson(jsonResponse);
   }
 
-  Future<List<Weather>> getFiveDayForecast(String city) async {
+  Future<List<Forecast>> getFiveDayForecast(String city) async {
     final response = await _weatherHttpClient.getFiveDayForecast(city);
     final jsonResponse = json.decode(response.body);
     final List<dynamic> list = jsonResponse['list'];
-    final weatherList = list.map((e) => Weather.fromJson(e)).toList();
-    return weatherList;
+    final forecastList = list.map((e) => Forecast.fromJson(e)).toList();
+    return forecastList;
   }
 
   Future<Weather> getCurrentWeatherByCoords(double lat, double lon) async {

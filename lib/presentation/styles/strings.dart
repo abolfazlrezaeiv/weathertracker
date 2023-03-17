@@ -5,6 +5,7 @@ class AppString {
   static const FIND_CITY = 'Find My City';
   static const HOME = 'HOME';
   static const SAVED = 'SAVED';
+  static const FIVE_DAY_FORECAST = 'Five Days Forecast';
   static const cities = [
     'Kuala Lumpur',
     'Klang',

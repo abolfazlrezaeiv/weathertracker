@@ -12,7 +12,8 @@ class WeatherHttpClient {
   }
 
   Future<http.Response> getFiveDayForecast(String city) async {
-    final url = '$_baseUrl/forecast?q=$city&appid=$_apiKey&units=imperial';
+    final url =
+        '$_baseUrl/forecast?q=$city&appid=$_apiKey&units=imperial&cnt=5';
     final response = await http.get(Uri.parse(url));
     return response;
   }

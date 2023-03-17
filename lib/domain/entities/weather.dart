@@ -1,5 +1,4 @@
 class Weather {
-  final int id;
   final String cityName;
   final String description;
   final double temperature;
@@ -8,7 +7,6 @@ class Weather {
   final String iconCode;
 
   Weather({
-    required this.id,
     required this.cityName,
     required this.description,
     required this.temperature,
@@ -22,7 +20,6 @@ class Weather {
     final main = json['main'];
     final wind = json['wind'];
     return Weather(
-      id: json['id'],
       cityName: json['name'],
       description: weather['description'],
       temperature: main['temp'].toDouble(),

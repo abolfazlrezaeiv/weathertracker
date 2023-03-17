@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen>
                 WeatherInfoTab(
                   temperature: state.weatherData.temperature.toString(),
                   cityName: state.weatherData.cityName.toString(),
+                  forecast: state.weatherForecast,
                 ),
                 SavedCitiesTab(
                   tabController: _tabController,

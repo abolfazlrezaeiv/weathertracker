@@ -7,7 +7,7 @@ class SharedPreferencesHelper {
     final prefs = await SharedPreferences.getInstance();
     List<String> cities = prefs.getStringList(_keyCities) ?? [];
     cities.add(city);
-    await prefs.setStringList(_keyCities, cities);
+    await prefs.setStringList(_keyCities, cities.toSet().toList());
   }
 
   Future<List<String>> getCities() async {

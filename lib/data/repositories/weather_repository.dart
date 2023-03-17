@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:weathertracker/data/data_sources/weather_remote_data_source.dart';
+import 'package:weathertracker/domain/entities/forecast.dart';
 import 'package:weathertracker/domain/entities/weather.dart';
 
 class WeatherRepository {
@@ -17,7 +18,7 @@ class WeatherRepository {
         position.latitude, position.longitude);
   }
 
-  Future<List<Weather>> getFiveDayForecast({required String city}) async {
+  Future<List<Forecast>> getFiveDayForecast({required String city}) async {
     return await remoteDataSource.getFiveDayForecast(city);
   }
 }
