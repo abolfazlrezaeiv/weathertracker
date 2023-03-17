@@ -15,24 +15,32 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherInitialState> {
       : super(WeatherInitialState()) {
     on<WeatherEvent>((event, emit) async {
       if (event is HomeScreenLoadedEvent) {
-        var weatherData = await _repository.getCurrentWeather(city: '');
-        emit(WeatherDataFetchState(weatherData));
+        var weatherData =
+            await _repository.getCurrentWeather(city: 'Kuala Lumpur');
+        var cities = await _sharedPreferencesHelper.getCities();
+        emit(WeatherDataFetchState(weatherData: weatherData, cities: cities));
       }
 
       if (event is CitySelectedEvent) {
         var weatherData = await _repository.getCurrentWeather(city: event.city);
-        emit(WeatherDataFetchState(weatherData));
+        var cities = await _sharedPreferencesHelper.getCities();
+        emit(WeatherDataFetchState(weatherData: weatherData, cities: cities));
       }
 
       if (event is LocationButtonPressedEvent) {
         var location = await determinePosition();
         var weatherData =
             await _repository.getCurrentLocationWeather(position: location);
-        emit(WeatherDataFetchState(weatherData));
+        var cities = await _sharedPreferencesHelper.getCities();
+        emit(WeatherDataFetchState(weatherData: weatherData, cities: cities));
       }
 
       if (event is AddCityToListEvent) {
+        var weatherData = await _repository.getCurrentWeather(city: event.city);
         await _sharedPreferencesHelper.addCity(event.city);
+        var cities = await _sharedPreferencesHelper.getCities();
+
+        emit(WeatherDataFetchState(weatherData: weatherData, cities: cities));
       }
     });
   }

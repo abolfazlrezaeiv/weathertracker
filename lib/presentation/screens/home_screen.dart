@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weathertracker/presentation/bloc/weather_bloc.dart';
-import 'package:weathertracker/presentation/styles/paddings.dart';
 import 'package:weathertracker/presentation/styles/strings.dart';
 import 'package:weathertracker/presentation/styles/text_themes.dart';
-import 'package:weathertracker/presentation/widgets/added_cities_carousel.dart';
+import 'package:weathertracker/presentation/widgets/drawer_city_list.dart';
+import 'package:weathertracker/presentation/widgets/saved_cities_tab.dart';
+import 'package:weathertracker/presentation/widgets/weather_info_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,87 +14,75 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        leadingWidth: 200,
-        leading: ElevatedButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.location_history),
-          label: const Text(AppString.FIND_CITY),
+        leading: IconButton(
+          onPressed: () {
+            context.read<WeatherBloc>().add(LocationButtonPressedEvent());
+          },
+          icon: const Icon(Icons.person_pin_rounded),
         ),
         actions: [
-          ElevatedButton.icon(
-            onPressed: () {
-              _scaffoldKey.currentState!.openEndDrawer();
-            },
-            icon: const Icon(Icons.menu),
-            label: const Text(AppString.SELECT_CITY),
+          TextButton(
+            onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+            child: const Text(
+              AppString.SELECT_CITY,
+              style: AppTextTheme.size20BoldWhite,
+            ),
           ),
         ],
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: AppString.cities
-              .map((city) => Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text(city),
-                        ),
-                      ),
-                      IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.add,
-                            color: Colors.red,
-                          ))
-                    ],
-                  )))
-              .toList(),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Text(AppString.HOME, style: AppTextTheme.size20BoldWhite),
+            Text(AppString.SAVED, style: AppTextTheme.size20BoldWhite),
+          ],
         ),
       ),
+      endDrawer: DrawerCityListSelectable(
+          scaffoldKey: _scaffoldKey, tabController: _tabController),
       body: BlocBuilder<WeatherBloc, WeatherInitialState>(
         builder: (context, state) {
-          return ListView(
-            children: [
-              if (state is WeatherDataFetchState)
-                Padding(
-                  padding: AppPadding.top100,
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Text(
-                          state.weatherData.temperature.toString(),
-                          style: AppTextTheme.size40bold,
-                        ),
-                        Text(
-                          state.weatherData.cityName,
-                          style: AppTextTheme.size40bold,
-                        ),
-                      ],
-                    ),
-                  ),
+          if (state is WeatherDataFetchState) {
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                WeatherInfoTab(
+                  temperature: state.weatherData.temperature.toString(),
+                  cityName: state.weatherData.cityName.toString(),
                 ),
-              const Padding(
-                padding: AppPadding.top100,
-                child: AddedCitiesCarousel(
-                  cities: [],
-                ),
-              ),
-            ],
-          );
+                SavedCitiesTab(
+                  tabController: _tabController,
+                  cities: state.cities,
+                )
+              ],
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

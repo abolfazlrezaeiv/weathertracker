@@ -1,8 +1,10 @@
 // ignore_for_file: constant_identifier_names
 
 class AppString {
-  static const SELECT_CITY = 'Select The City';
+  static const SELECT_CITY = 'Cities';
   static const FIND_CITY = 'Find My City';
+  static const HOME = 'HOME';
+  static const SAVED = 'SAVED';
   static const cities = [
     'Kuala Lumpur',
     'Klang',

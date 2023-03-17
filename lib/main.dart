@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: MultiRepositoryProvider(
         providers: [
           RepositoryProvider(create: (context) => SharedPreferencesHelper()),
@@ -18,13 +19,13 @@ void main() {
               create: (context) =>
                   WeatherRemoteDataSource(context.read<WeatherHttpClient>())),
           RepositoryProvider(
-            create: (context) => WeatherRepository(
-                remoteDataSource: context.read<WeatherRemoteDataSource>()),
-          ),
+              create: (context) => WeatherRepository(
+                  remoteDataSource: context.read<WeatherRemoteDataSource>())),
         ],
         child: BlocProvider(
           create: (context) => WeatherBloc(context.read<WeatherRepository>(),
-              context.read<SharedPreferencesHelper>()),
+              context.read<SharedPreferencesHelper>())
+            ..add(HomeScreenLoadedEvent()),
           child: const HomeScreen(),
         ),
       ),
